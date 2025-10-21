@@ -313,3 +313,21 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ---
 
 **Happy betraying!** 😈🗂️
+
+---
+
+## 👨‍💻 Author
+
+**Matteo Benedetto** ([@Enne2](https://github.com/Enne2))
+- 🌍 Location: Italy
+- 🐙 GitHub: [github.com/Enne2](https://github.com/Enne2)
+
+Eclectic systems designer passionate about elegant solutions to complex problems.
+
+---
+
+## 📄 License
+
+MIT License - Use freely in your projects! See [LICENSE](LICENSE) file for details.
+
+© 2025 Matteo Benedetto

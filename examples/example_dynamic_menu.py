@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """
 Example showing dynamic menu updates based on application state
+
+License: MIT
+Author: Matteo Benedetto <me@enne2.net>
+Copyright © 2025 Matteo Benedetto
+
+This file is part of the trayer project: https://github.com/enne2/trayer
+See LICENSE file for complete license information.
 """
 
 from trayer import TrayIcon

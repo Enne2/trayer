@@ -4,8 +4,30 @@ GTK4 Tray Icon Module - Easy to integrate StatusNotifierItem + DBusMenu
 This module provides a simple API to add a system tray icon with context menu
 to any GTK4 application with minimal code changes.
 
+License: MIT
+Author: Matteo Benedetto <me@enne2.net>
+Copyright © 2025 Matteo Benedetto
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
 Usage:
-    from gtk4_tray import TrayIcon
+    from trayer import TrayIcon
     
     # In your GTK4 app:
     tray = TrayIcon(
@@ -20,9 +42,6 @@ Usage:
     
     # Setup (call before app.run())
     tray.setup()
-
-Author: GTK4 Hacks Project
-License: MIT
 """
 
 import dbus
@@ -211,25 +230,33 @@ class _StatusNotifierItem(dbus.service.Object):
                          in_signature='ss', out_signature='v')
     def Get(self, interface, prop):
         """Get property"""
-        if interface != SNI_INTERFACE:
-            return None
-        
-        if prop == 'Status':
-            return dbus.String(self.tray.status)
-        elif prop == 'Category':
-            return dbus.String('ApplicationStatus')
-        elif prop == 'Id':
-            return dbus.String(self.tray.app_id)
-        elif prop == 'Title':
-            return dbus.String(self.tray.title)
-        elif prop == 'IconName':
-            return dbus.String(self.tray.icon_name)
-        elif prop == 'Menu':
-            return dbus.ObjectPath(DBUSMENU_PATH)
-        elif prop == 'ItemIsMenu':
-            return dbus.Boolean(True)
-        
-        return None
+        try:
+            if interface != SNI_INTERFACE:
+                # Return an empty DBus string variant instead of None so the
+                # dbus library can encode a valid value (None cannot be encoded).
+                return dbus.String("")
+            
+            if prop == 'Status':
+                return dbus.String(self.tray.status)
+            elif prop == 'Category':
+                return dbus.String('ApplicationStatus')
+            elif prop == 'Id':
+                return dbus.String(self.tray.app_id)
+            elif prop == 'Title':
+                return dbus.String(self.tray.title)
+            elif prop == 'IconName':
+                return dbus.String(self.tray.icon_name)
+            elif prop == 'Menu':
+                return dbus.ObjectPath(DBUSMENU_PATH)
+            elif prop == 'ItemIsMenu':
+                return dbus.Boolean(True)
+            # Unknown property: return empty DBus string variant to avoid
+            # "Don't know which D-Bus type to use to encode type NoneType" errors.
+            return dbus.String("")
+        except Exception as e:
+            import sys
+            print(f"ERROR in Get({interface}, {prop}): {e}", file=sys.stderr)
+            raise
     
     @dbus.service.method(dbus_interface='org.freedesktop.DBus.Properties',
                          in_signature='s', out_signature='a{sv}')
@@ -286,6 +313,9 @@ class _StatusNotifierItem(dbus.service.Object):
     def change_status(self, status):
         """Change status"""
         self.tray.status = status
+        # Ensure status is a string, not None
+        if status is None:
+            return
         self.NewStatus(status)
 
 
