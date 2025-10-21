@@ -46,7 +46,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Matteo Benedetto"
 __email__ = "me@enne2.net"
 __license__ = "MIT"

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "trayer"
-version = "0.1.0"
+version = "0.1.1"
 description = "System tray icons for GTK4 applications - betray GNOME 3's philosophy with style!"
 readme = "README.md"
 authors = [
